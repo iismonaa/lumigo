@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="lumigoGrad1" x1="10" y1="10" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="45%" stop-color="#3b82f6"/>
+      <stop offset="75%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <linearGradient id="lumigoGrad2" x1="25" y1="95" x2="95" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="50%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#facc15"/>
+    </linearGradient>
+    <filter id="neonGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect x="8" y="8" width="104" height="104" rx="28" fill="#0b1126" stroke="url(#lumigoGrad1)" stroke-width="4"/>
+  <path d="M60 18 L98 40 L98 80 L60 102 L22 80 L22 40 Z" fill="url(#lumigoGrad1)" fill-opacity="0.16" stroke="url(#lumigoGrad1)" stroke-width="2.5"/>
+  <path d="M44 34 L44 76 L80 76" stroke="url(#lumigoGrad2)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter="url(#neonGlow)"/>
+  <circle cx="82" cy="40" r="8" fill="#22d3ee" filter="url(#neonGlow)"/>
+  <path d="M70 30 L76 42 L68 44 L78 58" stroke="#facc15" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

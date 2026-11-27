@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIGO — Do'stlar Tizimi</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logos/favicon.svg">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/games.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <header id="lumigo-navbar"></header>
+  <main class="container" id="friends-root" style="padding-top:24px;"></main>
+  <footer id="lumigo-footer"></footer>
+
+  <script defer src="../js/storage.js"></script>
+  <script defer src="../js/language.js"></script>
+  <script defer src="../js/theme.js"></script>
+  <script defer src="../js/auth.js"></script>
+  <script defer src="../js/levels.js"></script>
+  <script defer src="../js/rewards.js"></script>
+  <script defer src="../js/friends.js"></script>
+  <script defer src="../js/music.js"></script>
+  <script defer src="../js/search.js"></script>
+  <script defer src="../js/games.js"></script>
+  <script defer src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.LUMIGO.app.initShell('friends', false);
+      const root = document.getElementById('friends-root');
+
+      function render() {
+        const L = window.LUMIGO;
+        const st = L.storage;
+        const me = st.getActiveUser();
+        const users = st.getUsers();
+        const kidsMode = st.isKidsMode();
+
+        if (!me) {
+          root.innerHTML = `<div class="panel-card" style="text-align:center;margin-top:40px;"><button class="btn btn-primary" onclick="window.LUMIGO.app.openAuthModal()">Login</button></div>`;
+          return;
+        }
+
+        const myFriends = (me.friends || []).map(id => users.find(u => u.id === id)).filter(Boolean);
+        const requestsIn = (me.friendRequestsIn || []).map(id => users.find(u => u.id === id)).filter(Boolean);
+        const others = users.filter(u => u.id !== me.id && !(me.friends || []).includes(u.id));
+
+        root.innerHTML = `
+          <div class="page-banner">
+            <div>
+              <span class="badge badge-pink">MOBILE LEGENDS USLUBIDA</span>
+              <h1 style="font-size:1.9rem;font-weight:900;margin-top:6px;">🤝 Do'stlar & Jamoa</h1>
+              <p style="color:var(--text-secondary);">Qurilmadagi demo accountlar o'rtasida do'stlik so'rovlarini sinab ko'ring.</p>
+            </div>
+            <button class="btn btn-primary" onclick="window.LUMIGO.app.openAuthModal('login')">🔄 Demo Accountni almashtirish</button>
+          </div>
+
+          ${kidsMode ? `
+            <div class="panel-card" style="margin-bottom:18px;border-color:#22c55e;background:rgba(34,197,94,0.12);">
+              🛡️ <strong>Bolalar Xavfsiz Rejimi (${st.getAgeGroup()} yosh):</strong> Notanish foydalanuvchilarga doʻstlik soʻrovi yuborish va ochiq takliflar xavfsizlik uchun cheklangan.
+            </div>
+          ` : ''}
+
+          <div class="panel-card" style="margin-bottom:18px;">
+            <h3 style="margin-bottom:10px;">🔍 O'yinchi qidirish</h3>
+            <input type="text" id="fr-search" class="form-control" placeholder="Username yozing (masalan: CyberFox, NeonNinja)...">
+            <div id="fr-search-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px;"></div>
+          </div>
+
+          ${requestsIn.length ? `
+            <div class="panel-card" style="margin-bottom:18px;">
+              <h3 style="margin-bottom:12px;">📩 Kiruvchi do'stlik so'rovlari (${requestsIn.length})</h3>
+              <div style="display:grid;gap:10px;">
+                ${requestsIn.map(u => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:12px;background:var(--bg-input);flex-wrap:wrap;gap:10px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <span style="font-size:1.8rem;">${u.avatar}</span>
+                      <div><strong>${u.username}</strong><div style="font-size:0.78rem;color:var(--text-secondary);">Level ${u.level}</div></div>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                      <button class="btn btn-lime btn-sm" data-acc="${u.id}">✓ Accept</button>
+                      <button class="btn btn-danger btn-sm" data-rej="${u.id}">✕ Reject</button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="panel-card">
+            <h3 style="margin-bottom:12px;">👥 Mening do'stlarim (${myFriends.length})</h3>
+            ${myFriends.length ? `
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;">
+                ${myFriends.map(f => {
+                  const rank = L.levels.getRankTitle(f.level || 1);
+                  return `
+                    <div class="panel-card" style="padding:14px;">
+                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                        <div class="podium-avatar ${f.frame || 'frame-default'}" style="width:48px;height:48px;font-size:1.5rem;margin:0;">${f.avatar}</div>
+                        <div style="flex:1;">
+                          <strong>${f.username}</strong>
+                          <div style="font-size:0.76rem;color:var(--text-secondary);">${f.online ? '🟢 Online' : '⚫ Offline'} • ${rank.badge} Lvl ${f.level}</div>
+                        </div>
+                      </div>
+                      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <button class="btn btn-primary btn-sm" data-view="${f.id}">👤 Profil</button>
+                        <button class="btn btn-glass btn-sm" data-inv="${f.id}">🎮 Invite</button>
+                        <button class="btn btn-danger btn-sm" data-rem="${f.id}">🗑️</button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            ` : `<p style="color:var(--text-secondary);">Hozircha do'stlar yo'q. Yuqoridan o'yinchi qidirib qo'shing!</p>`}
+          </div>
+        `;
+
+        const sInput = root.querySelector('#fr-search');
+        const sList = root.querySelector('#fr-search-list');
+        function renderSearch() {
+          const q = sInput.value.trim().toLowerCase();
+          const matched = others.filter(u => !q || u.username.toLowerCase().includes(q));
+          sList.innerHTML = matched.map(u => {
+            const sent = (me.friendRequestsOut || []).includes(u.id);
+            return `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:12px;background:var(--bg-input);">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="font-size:1.6rem;">${u.avatar}</span>
+                  <div>
+                    <strong>${u.username}</strong>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);">${u.online ? '🟢 Online' : '⚫ Offline'} • Lvl ${u.level}</div>
+                  </div>
+                </div>
+                <button class="btn btn-sm ${sent ? 'btn-glass' : 'btn-primary'}" data-add="${u.id}" ${sent || kidsMode ? 'disabled' : ''}>
+                  ${sent ? 'Yuborildi' : '+ Add'}
+                </button>
+              </div>
+            `;
+          }).join('');
+          sList.querySelectorAll('[data-add]').forEach(b => {
+            b.onclick = () => {
+              const res = L.friends.sendFriendRequest(b.getAttribute('data-add'));
+              if (!res.ok) L.rewards.toast(res.error, '⚠️');
+              else L.rewards.toast("So'rov yuborildi!", '🤝');
+            };
+          });
+        }
+
+        sInput.oninput = renderSearch;
+        renderSearch();
+
+        root.querySelectorAll('[data-acc]').forEach(b => b.onclick = () => L.friends.acceptFriendRequest(b.getAttribute('data-acc')));
+        root.querySelectorAll('[data-rej]').forEach(b => b.onclick = () => L.friends.rejectFriendRequest(b.getAttribute('data-rej')));
+        root.querySelectorAll('[data-rem]').forEach(b => b.onclick = () => L.friends.removeFriend(b.getAttribute('data-rem')));
+        root.querySelectorAll('[data-view]').forEach(b => b.onclick = () => L.friends.openFriendProfileModal(b.getAttribute('data-view')));
+        root.querySelectorAll('[data-inv]').forEach(b => b.onclick = () => L.friends.inviteFriendToGame(b.getAttribute('data-inv'), 'Arena'));
+      }
+
+      window.addEventListener('lumigo:user-updated', render);
+      window.addEventListener('lumigo:age-updated', render);
+      render();
+    });
+  </script>
+</body>
+</html>

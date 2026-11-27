@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIGO — Custom Code Sandbox</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logos/favicon.svg">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/games.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <header id="lumigo-navbar"></header>
+  <main class="container" style="padding-top:24px;">
+    <div class="page-banner">
+      <div>
+        <span class="badge badge-cyan">🛡️ SANDBOXED IFRAME EXECUTION</span>
+        <h1 style="font-size:1.9rem;font-weight:900;margin-top:6px;">💻 O'z Kodingizni Qo'shing (Custom Code)</h1>
+        <p style="color:var(--text-secondary);">
+          JavaScript kodingiz izolyatsiya qilingan sandbox iframe ichida ishlaydi. Asosiy sayt, account va localStorage maʼlumotlariga kirish taqiqlangan.
+        </p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-glass btn-sm" id="tpl-ball">🏀 Neon Ball Demo</button>
+        <button class="btn btn-glass btn-sm" id="tpl-click">🎯 Clicker Demo</button>
+      </div>
+    </div>
+
+    <div class="panel-card" style="margin-bottom:18px;border-color:rgba(250,204,21,0.45);background:rgba(250,204,21,0.08);">
+      ⚠️ <strong>Xavfsizlik eslatmasi:</strong> Faqat oʻzingiz ishongan JavaScript kodni ishga tushiring. Kod <code>sandbox="allow-scripts"</code> rejimida alohida kontekstda bajariladi.
+    </div>
+
+    <div class="code-workspace">
+      <div class="panel-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <strong>Code Editor (JavaScript)</strong>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn btn-lime btn-sm" id="btn-run-code">▶ Run Code</button>
+            <button class="btn btn-danger btn-sm" id="btn-stop-code">⏹ Stop Code</button>
+            <button class="btn btn-glass btn-sm" id="btn-clear-code">🧹 Clear</button>
+            <button class="btn btn-primary btn-sm" id="btn-save-code">💾 Save Code</button>
+          </div>
+        </div>
+        <textarea id="code-editor" class="code-editor-area" spellcheck="false"></textarea>
+        <div id="saved-list" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+      </div>
+
+      <div class="panel-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <strong>Sandbox Output (Isolated Iframe)</strong>
+          <span class="badge badge-purple" id="sandbox-status">Ready</span>
+        </div>
+        <iframe id="sandbox-frame" class="sandbox-frame" sandbox="allow-scripts" title="LUMIGO Code Sandbox"></iframe>
+      </div>
+    </div>
+  </main>
+  <footer id="lumigo-footer"></footer>
+
+  <script defer src="../js/storage.js"></script>
+  <script defer src="../js/language.js"></script>
+  <script defer src="../js/theme.js"></script>
+  <script defer src="../js/auth.js"></script>
+  <script defer src="../js/levels.js"></script>
+  <script defer src="../js/rewards.js"></script>
+  <script defer src="../js/friends.js"></script>
+  <script defer src="../js/music.js"></script>
+  <script defer src="../js/search.js"></script>
+  <script defer src="../js/games.js"></script>
+  <script defer src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.LUMIGO.app.initShell('code', false);
+      const editor = document.getElementById('code-editor');
+      const frame = document.getElementById('sandbox-frame');
+      const statusBadge = document.getElementById('sandbox-status');
+      const savedBox = document.getElementById('saved-list');
+
+      const TPL_BALL = `// LUMIGO Sandbox Neon Ball
+const c = document.createElement('canvas');
+c.width = 420; c.height = 340;
+c.style.background = '#070b19';
+c.style.borderRadius = '12px';
+document.body.appendChild(c);
+const ctx = c.getContext('2d');
+let x = 120, y = 100, vx = 3.2, vy = 2.6;
+function loop() {
+  ctx.fillStyle = 'rgba(7,11,25,0.25)';
+  ctx.fillRect(0, 0, c.width, c.height);
+  x += vx; y += vy;
+  if (x < 18 || x > c.width - 18) vx *= -1;
+  if (y < 18 || y > c.height - 18) vy *= -1;
+  ctx.beginPath();
+  ctx.arc(x, y, 18, 0, Math.PI * 2);
+  ctx.fillStyle = '#22d3ee';
+  ctx.shadowBlur = 18;
+  ctx.shadowColor = '#ec4899';
+  ctx.fill();
+  requestAnimationFrame(loop);
+}
+loop();`;
+
+      const TPL_CLICK = `// LUMIGO Mini Neon Clicker
+let score = 0;
+const box = document.createElement('div');
+box.style.cssText = 'color:#fff;font-family:sans-serif;text-align:center;padding:30px;';
+box.innerHTML = '<h2 id="sc">Score: 0</h2><button id="btn" style="padding:16px 28px;font-size:18px;border:none;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#ec4899);color:#fff;cursor:pointer;">CLICK ME! ⚡</button>';
+document.body.appendChild(box);
+document.getElementById('btn').onclick = () => {
+  score++;
+  document.getElementById('sc').textContent = 'Score: ' + score;
+};`;
+
+      editor.value = localStorage.getItem('lumigo_last_custom_code') || TPL_BALL;
+
+      function runInSandbox() {
+        const confirmed = window.confirm('Ogohlantirish: Kod izolyatsiya qilingan sandbox iframe ichida ishga tushiriladi. Davom etasizmi?');
+        if (!confirmed) return;
+        const userCode = editor.value;
+        const html = `<!DOCTYPE html><html><head><style>body{margin:0;padding:12px;background:#0b1224;color:#e2e8f0;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;}</style></head><body><div id="err" style="color:#fb7185;font-family:monospace;"></div><script>try{\n${userCode.replace(/<\/script>/gi, '<\\/script>')}\n}catch(e){document.getElementById('err').textContent='Error: '+e.message;}<\/script></body></html>`;
+        frame.srcdoc = html;
+        statusBadge.textContent = 'Running';
+        statusBadge.className = 'badge badge-lime';
+      }
+
+      function stopSandbox() {
+        frame.srcdoc = '<html><body style="background:#0b1224;color:#94a3b8;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:90vh;">⏹ Sandbox Stopped</body></html>';
+        statusBadge.textContent = 'Stopped';
+        statusBadge.className = 'badge badge-pink';
+      }
+
+      async function loadSavedList() {
+        let items = [];
+        try {
+          items = await window.LUMIGO.storage.idbGetAll('customCode');
+        } catch (e) {
+          items = JSON.parse(localStorage.getItem('lumigo_saved_codes_fb') || '[]');
+        }
+        savedBox.innerHTML = items.map(it => `<button class="btn btn-glass btn-sm" data-load="${it.id}">📄 ${it.name}</button>`).join('');
+        savedBox.querySelectorAll('[data-load]').forEach(b => {
+          b.onclick = () => {
+            const found = items.find(x => x.id === b.getAttribute('data-load'));
+            if (found) editor.value = found.code;
+          };
+        });
+      }
+
+      document.getElementById('btn-run-code').onclick = runInSandbox;
+      document.getElementById('btn-stop-code').onclick = stopSandbox;
+      document.getElementById('btn-clear-code').onclick = () => { editor.value = ''; stopSandbox(); };
+      document.getElementById('btn-save-code').onclick = async () => {
+        const name = window.prompt('Kod nomini kiriting:', 'MyScript_' + new Date().toLocaleTimeString());
+        if (!name) return;
+        const item = { id: 'cc_' + Date.now(), name, code: editor.value };
+        localStorage.setItem('lumigo_last_custom_code', editor.value);
+        try {
+          await window.LUMIGO.storage.idbPut('customCode', item);
+        } catch (e) {
+          const fb = JSON.parse(localStorage.getItem('lumigo_saved_codes_fb') || '[]');
+          fb.push(item);
+          localStorage.setItem('lumigo_saved_codes_fb', JSON.stringify(fb));
+        }
+        window.LUMIGO.rewards.toast('Kod saqlandi!', '💾');
+        loadSavedList();
+      };
+
+      document.getElementById('tpl-ball').onclick = () => { editor.value = TPL_BALL; };
+      document.getElementById('tpl-click').onclick = () => { editor.value = TPL_CLICK; };
+
+      loadSavedList();
+    });
+  </script>
+</body>
+</html>

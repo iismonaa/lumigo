@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIGO — O'yinchi Profili</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logos/favicon.svg">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/games.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <header id="lumigo-navbar"></header>
+  <main class="container" id="profile-root" style="padding-top:24px;"></main>
+  <footer id="lumigo-footer"></footer>
+
+  <script defer src="../js/storage.js"></script>
+  <script defer src="../js/language.js"></script>
+  <script defer src="../js/theme.js"></script>
+  <script defer src="../js/auth.js"></script>
+  <script defer src="../js/levels.js"></script>
+  <script defer src="../js/rewards.js"></script>
+  <script defer src="../js/friends.js"></script>
+  <script defer src="../js/music.js"></script>
+  <script defer src="../js/search.js"></script>
+  <script defer src="../js/games.js"></script>
+  <script defer src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.LUMIGO.app.initShell('profile', false);
+      const root = document.getElementById('profile-root');
+      const avatars = ['🦊','🎮','👑','🥷','🚀','🐉','🤖','🦄','⚡','💎','🦁','🐼'];
+
+      function render() {
+        const L = window.LUMIGO;
+        const st = L.storage;
+        const user = st.getActiveUser();
+
+        if (!user) {
+          root.innerHTML = `
+            <div class="panel-card" style="max-width:480px;margin:40px auto;text-align:center;">
+              <h2>Siz tizimdan chiqgansiz</h2>
+              <p style="color:var(--text-secondary);margin:10px 0 18px;">${L.i18n.t('demo_auth_note')}</p>
+              <button class="btn btn-primary" onclick="window.LUMIGO.app.openAuthModal('login')">Login / Register</button>
+            </div>
+          `;
+          return;
+        }
+
+        const prog = L.levels.getXPProgress(user.xp || 0);
+        const rank = L.levels.getRankTitle(prog.level);
+        const winRate = user.totalGames ? Math.round((user.wins / user.totalGames) * 100) : 0;
+
+        root.innerHTML = `
+          <div class="page-banner">
+            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+              <div class="podium-avatar ${user.frame || 'frame-default'}" style="width:92px;height:92px;font-size:2.8rem;margin:0;">
+                ${user.avatar}
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <h1 style="font-size:1.9rem;font-weight:900;">${user.username}</h1>
+                  <span class="badge badge-purple">${rank.badge} Level ${prog.level} — ${rank.title}</span>
+                  <span class="badge badge-cyan">🎯 ${user.ageGroup || '18-24'} yosh</span>
+                </div>
+                <p style="color:var(--text-secondary);font-size:0.88rem;margin-top:4px;">${user.email} • Frontend Demo Account</p>
+                <div style="margin-top:10px;max-width:340px;">
+                  <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:4px;">
+                    <span>XP: ${user.xp}</span>
+                    <span>${prog.current}/${prog.needed} XP (${prog.pct}%)</span>
+                  </div>
+                  <div class="progress-track"><div class="progress-fill" style="width:${prog.pct}%;"></div></div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn btn-glass btn-sm" onclick="window.LUMIGO.app.openAgeModal()">🎯 Yoshni o'zgartirish</button>
+              <button class="btn btn-primary btn-sm" onclick="window.LUMIGO.app.openAuthModal('login')">🔄 Account almashtirish</button>
+              <button class="btn btn-danger btn-sm" id="btn-logout">🚪 Logout</button>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px;">
+            <div class="panel-card" style="text-align:center;"><div style="font-size:1.6rem;">🪙</div><strong>${user.coins}</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Coins</div></div>
+            <div class="panel-card" style="text-align:center;"><div style="font-size:1.6rem;">💎</div><strong>${user.diamonds}</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Diamonds</div></div>
+            <div class="panel-card" style="text-align:center;"><div style="font-size:1.6rem;">💵</div><strong>${user.money}</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Virtual Money</div></div>
+            <div class="panel-card" style="text-align:center;"><div style="font-size:1.6rem;">🎮</div><strong>${user.totalGames}</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Total Games</div></div>
+            <div class="panel-card" style="text-align:center;"><div style="font-size:1.6rem;">🏆</div><strong>${user.wins}</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Wins</div></div>
+            <div class="panel-card" style="text-align:center;"><div style="font-size:1.6rem;">💔</div><strong>${user.losses}</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Losses</div></div>
+            <div class="panel-card" style="text-align:center;"><div style="font-size:1.6rem;">📈</div><strong>${winRate}%</strong><div style="font-size:0.8rem;color:var(--text-secondary);">Win Rate</div></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="code-workspace">
+            <div class="panel-card">
+              <h2 style="margin-bottom:14px;">✏️ Profilni tahrirlash & Avatar</h2>
+              <form id="edit-profile-form">
+                <div class="form-group">
+                  <label>Username</label>
+                  <input type="text" id="ep-name" class="form-control" value="${user.username}" required minlength="3">
+                </div>
+                <div class="form-group">
+                  <label>Avatar tanlash</label>
+                  <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    ${avatars.map(av => `<button type="button" class="icon-btn ${user.avatar === av ? 'btn-primary' : ''}" data-pick-av="${av}">${av}</button>`).join('')}
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Saqlash ✅</button>
+              </form>
+            </div>
+
+            <div class="panel-card">
+              <h2 style="margin-bottom:14px;">🏅 Yutuqlar (Achievements)</h2>
+              <div style="display:grid;gap:10px;">
+                ${L.levels.ACHIEVEMENTS.map(a => {
+                  const has = (user.achievements || []).includes(a.id);
+                  return `
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;background:var(--bg-input);opacity:${has ? 1 : 0.45};">
+                      <span style="font-size:1.8rem;">${a.icon}</span>
+                      <div style="flex:1;">
+                        <strong>${a.name}</strong>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);">${a.desc}</div>
+                      </div>
+                      <span class="badge ${has ? 'badge-lime' : 'badge-purple'}">${has ? 'Ochilgan' : 'Qulf'}</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+
+        let chosenAv = user.avatar;
+        root.querySelectorAll('[data-pick-av]').forEach(btn => {
+          btn.onclick = () => {
+            chosenAv = btn.getAttribute('data-pick-av');
+            root.querySelectorAll('[data-pick-av]').forEach(b => b.classList.remove('btn-primary'));
+            btn.classList.add('btn-primary');
+          };
+        });
+
+        root.querySelector('#edit-profile-form').onsubmit = (e) => {
+          e.preventDefault();
+          L.auth.editProfile({ username: root.querySelector('#ep-name').value, avatar: chosenAv });
+          L.rewards.toast('Profil yangilandi!', '✅');
+        };
+
+        root.querySelector('#btn-logout').onclick = () => {
+          L.auth.logout();
+          L.rewards.toast('Tizimdan chiqdingiz', '👋');
+        };
+      }
+
+      window.addEventListener('lumigo:user-updated', render);
+      window.addEventListener('lumigo:age-updated', render);
+      render();
+    });
+  </script>
+</body>
+</html>

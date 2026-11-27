@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIGO — O'yinlar Katalogi (25+ Mini-Games)</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logos/favicon.svg">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/games.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <header id="lumigo-navbar"></header>
+
+  <main class="container">
+    <div class="page-banner">
+      <div>
+        <span class="badge badge-cyan">25 TA HAQIQIY MINI-O'YIN</span>
+        <h1 style="font-size:2rem;font-weight:900;margin-top:6px;">🎮 LUMIGO O'yinlar Olami</h1>
+        <p style="color:var(--text-secondary);">Har bir o'yin Easy / Medium / Hard darajasi, timer va real ball tizimi bilan ishlaydi.</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input type="text" id="games-filter-search" class="form-control" placeholder="O'yin qidirish..." style="width:230px;">
+        <button class="btn btn-glass" onclick="window.LUMIGO.app.openAgeModal()">🎯 Yosh: <span id="games-age-lbl">All</span></button>
+      </div>
+    </div>
+
+    <div class="tabs-bar" id="games-cat-tabs">
+      <button class="tab-btn active" data-cat="all">Hammasi (25)</button>
+      <button class="tab-btn" data-cat="brain">🧠 Brain Training</button>
+      <button class="tab-btn" data-cat="puzzle">🧩 Puzzle</button>
+      <button class="tab-btn" data-cat="arcade">⚡ Arcade</button>
+      <button class="tab-btn" data-cat="strategy">♟️ Strategy</button>
+      <button class="tab-btn" data-cat="code">💻 Code & Typing</button>
+      <button class="tab-btn" data-cat="multiplayer">👥 Multiplayer / Bot</button>
+    </div>
+
+    <div class="games-grid" id="all-games-grid"></div>
+  </main>
+
+  <footer id="lumigo-footer"></footer>
+
+  <script defer src="../js/storage.js"></script>
+  <script defer src="../js/language.js"></script>
+  <script defer src="../js/theme.js"></script>
+  <script defer src="../js/auth.js"></script>
+  <script defer src="../js/levels.js"></script>
+  <script defer src="../js/rewards.js"></script>
+  <script defer src="../js/friends.js"></script>
+  <script defer src="../js/music.js"></script>
+  <script defer src="../js/search.js"></script>
+  <script defer src="../js/games.js"></script>
+  <script defer src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.LUMIGO.app.initShell('games', false);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      let activeCat = urlParams.get('cat') || 'all';
+      const grid = document.getElementById('all-games-grid');
+      const searchInput = document.getElementById('games-filter-search');
+      const ageLbl = document.getElementById('games-age-lbl');
+
+      function render() {
+        const ageId = window.LUMIGO.storage.getAgeGroup() || 'All';
+        ageLbl.textContent = ageId;
+        const q = searchInput.value.trim().toLowerCase();
+        const ageFiltered = window.LUMIGO.getFilteredGamesByAge(window.LUMIGO.GAMES);
+
+        const list = ageFiltered.filter(g => {
+          const matchCat = activeCat === 'all'
+            || g.category === activeCat
+            || (activeCat === 'multiplayer' && (g.supports2P || g.supportsBot));
+          const matchQ = !q || g.title.toLowerCase().includes(q) || g.desc.toLowerCase().includes(q);
+          return matchCat && matchQ;
+        });
+
+        grid.innerHTML = list.length
+          ? list.map(window.LUMIGO.renderGameCardHTML).join('')
+          : `<div class="panel-card" style="grid-column:1/-1;text-align:center;">Ushbu filtr bo'yicha o'yin topilmadi.</div>`;
+      }
+
+      document.querySelectorAll('#games-cat-tabs .tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-cat') === activeCat) {
+          document.querySelectorAll('#games-cat-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        }
+        btn.onclick = () => {
+          activeCat = btn.getAttribute('data-cat');
+          document.querySelectorAll('#games-cat-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          render();
+        };
+      });
+
+      searchInput.oninput = render;
+      window.addEventListener('lumigo:age-updated', render);
+      window.addEventListener('lumigo:lang-changed', render);
+      render();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+/* ==========================================================================
+   LUMIGO — Animations & Visual Effects
+   ========================================================================== */
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseScale {
+  0%, 100% { transform: scale(0.96) rotate(0deg); opacity: 0.65; }
+  50% { transform: scale(1.06) rotate(180deg); opacity: 0.95; }
+}
+
+@keyframes introLogo3D {
+  0% {
+    opacity: 0;
+    transform: perspective(700px) scale(0.25) rotateY(-65deg) rotateX(25deg);
+  }
+  65% {
+    opacity: 1;
+    transform: perspective(700px) scale(1.12) rotateY(12deg) rotateX(-6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(700px) scale(1) rotateY(0deg) rotateX(0deg);
+  }
+}
+
+@keyframes portalOpenExit {
+  0% {
+    opacity: 1;
+    clip-path: circle(150% at 50% 50%);
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.08);
+    filter: brightness(1.45) hue-rotate(25deg);
+  }
+  100% {
+    opacity: 0;
+    clip-path: circle(0% at 50% 50%);
+    transform: scale(1.22);
+    visibility: hidden;
+  }
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+
+@keyframes fadeUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(8deg); }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes countdownPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.22);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes levelUpBurst {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-8deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes neonBreath {
+  0%, 100% { box-shadow: 0 0 18px rgba(139, 92, 246, 0.45), 0 0 36px rgba(34, 211, 238, 0.2); }
+  50% { box-shadow: 0 0 28px rgba(236, 72, 153, 0.6), 0 0 54px rgba(34, 211, 238, 0.35); }
+}
+
+.animate-countdown {
+  animation: countdownPop 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-levelup {
+  animation: levelUpBurst 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.neon-pulse {
+  animation: neonBreath 2.8s ease-in-out infinite;
+}

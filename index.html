@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIGO — PLAY. THINK. WIN.</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logos/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/games.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <header id="lumigo-navbar"></header>
+
+  <main class="container">
+    <!-- 1. HERO SECTION -->
+    <section class="hero-section">
+      <div class="hero-card">
+        <div class="hero-floating-icons">
+          <span style="top:14%;left:45%;">🎮</span>
+          <span style="top:72%;left:48%;animation-delay:1.2s;">⚡</span>
+          <span style="top:18%;right:6%;animation-delay:2.1s;">💎</span>
+          <span style="bottom:12%;left:6%;animation-delay:0.8s;">🏆</span>
+        </div>
+        <div>
+          <div class="hero-eyebrow" data-i18n="hero_badge">25+ HAQIQIY MINI-OʻYIN • OFFLINE & LOKAL MULTIPLAYER</div>
+          <h1 class="hero-title">
+            <span data-i18n="hero_title_1">O'yna, Fikrlashni Kuchaytir va </span>
+            <span class="gradient-text" data-i18n="hero_title_2">G'olib Bo'l!</span>
+          </h1>
+          <p class="hero-subtitle" data-i18n="hero_sub">
+            LUMIGO — barcha yoshlar uchun yaratilgan rang-barang, yorqin gaming olami. Coin va Diamond to'pla, level oshir, do'stlar bilan bellash!
+          </p>
+          <div class="hero-cta-row">
+            <a href="pages/games.html" class="btn btn-hot">🚀 <span data-i18n="play_now">Hoziroq o'ynash</span></a>
+            <button class="btn btn-primary" onclick="window.LUMIGO.app.playIntroAnimation(true)">✨ <span data-i18n="replay_intro">Intro'ni qayta ko'rish</span></button>
+            <button class="btn btn-glass" onclick="window.LUMIGO.app.openAgeModal()">🎯 <span data-i18n="select_age_btn">Yosh guruhi</span>: <strong id="hero-age-badge">18-24</strong></button>
+          </div>
+          <div class="hero-stats-row" id="hero-stats"></div>
+        </div>
+
+        <div class="hero-showcase-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <strong style="font-size:1.05rem;">⚡ Quick Launch Arena</strong>
+            <span class="badge badge-lime" id="hero-kids-badge">Safe Mode</span>
+          </div>
+          <div class="hero-mini-grid" id="hero-quick-games"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. FEATURED GAMES CAROUSEL -->
+    <section class="section-block section-featured">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon">🌟</div>
+          <div>
+            <h2 class="section-title" data-i18n="sec_featured">Tanlangan o'yinlar</h2>
+            <p class="section-subtitle">Eng sara neon va strategik oʻyinlar</p>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn carousel-prev" data-target="car-featured">◀</button>
+          <button class="carousel-btn carousel-next" data-target="car-featured">▶</button>
+          <a href="pages/games.html" class="btn btn-glass btn-sm" data-i18n="view_all">Barchasini koʻrish</a>
+        </div>
+      </div>
+      <div class="carousel-wrapper" id="car-featured">
+        <div class="carousel-viewport"><div class="carousel-track"></div></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </section>
+
+    <!-- 3. TRENDING GAMES CAROUSEL -->
+    <section class="section-block section-trending">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon">🔥</div>
+          <div>
+            <h2 class="section-title" data-i18n="sec_trending">Trenddagi o'yinlar</h2>
+            <p class="section-subtitle">Hozir eng koʻp oʻynalayotgan hitlar</p>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn carousel-prev" data-target="car-trending">◀</button>
+          <button class="carousel-btn carousel-next" data-target="car-trending">▶</button>
+        </div>
+      </div>
+      <div class="carousel-wrapper" id="car-trending">
+        <div class="carousel-viewport"><div class="carousel-track"></div></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </section>
+
+    <!-- 4. POPULAR GAMES CAROUSEL -->
+    <section class="section-block section-popular">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon">💎</div>
+          <div>
+            <h2 class="section-title" data-i18n="sec_popular">Mashhur o'yinlar</h2>
+            <p class="section-subtitle">Oʻyinchilar sevimli klassikalari</p>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn carousel-prev" data-target="car-popular">◀</button>
+          <button class="carousel-btn carousel-next" data-target="car-popular">▶</button>
+        </div>
+      </div>
+      <div class="carousel-wrapper" id="car-popular">
+        <div class="carousel-viewport"><div class="carousel-track"></div></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </section>
+
+    <!-- 5. NEW GAMES CAROUSEL -->
+    <section class="section-block section-new">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon">✨</div>
+          <div>
+            <h2 class="section-title" data-i18n="sec_new">Yangi o'yinlar</h2>
+            <p class="section-subtitle">Yangi qoʻshilgan qiziqarli oʻyinlar</p>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn carousel-prev" data-target="car-new">◀</button>
+          <button class="carousel-btn carousel-next" data-target="car-new">▶</button>
+        </div>
+      </div>
+      <div class="carousel-wrapper" id="car-new">
+        <div class="carousel-viewport"><div class="carousel-track"></div></div>
+        <div class="carousel-dots"></div>
+      </div>
+    </section>
+
+    <!-- 6. CONTINUE PLAYING -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon">⏯️</div>
+          <div>
+            <h2 class="section-title" data-i18n="sec_continue">Davom ettirish</h2>
+            <p class="section-subtitle">Oxirgi oʻynagan oʻyinlaringiz</p>
+          </div>
+        </div>
+      </div>
+      <div class="games-grid" id="grid-continue"></div>
+    </section>
+
+    <!-- 7. RECOMMENDED FOR YOU (Age-based) -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon">🎯</div>
+          <div>
+            <h2 class="section-title" data-i18n="sec_recommended">Siz uchun tavsiya etilgan</h2>
+            <p class="section-subtitle" id="rec-age-note">Yoshingizga mos xavfsiz toʻplam</p>
+          </div>
+        </div>
+      </div>
+      <div class="games-grid" id="grid-recommended"></div>
+    </section>
+
+    <!-- 8. BRAIN TRAINING -->
+    <section class="section-block section-brain">
+      <div class="section-panel">
+        <div class="section-header">
+          <div class="section-title-group">
+            <div class="section-icon">🧠</div>
+            <div>
+              <h2 class="section-title" data-i18n="sec_brain">Aql charxlash (Brain Training)</h2>
+              <p class="section-subtitle">Xotira, matematika, mantiq va tezkor fikrlash</p>
+            </div>
+          </div>
+          <a href="pages/games.html?cat=brain" class="btn btn-primary btn-sm" data-i18n="view_all">Barchasini koʻrish</a>
+        </div>
+        <div class="games-grid" id="grid-brain"></div>
+      </div>
+    </section>
+
+    <!-- 9. MULTIPLAYER GAMES -->
+    <section class="section-block section-multiplayer">
+      <div class="section-panel">
+        <div class="section-header">
+          <div class="section-title-group">
+            <div class="section-icon">👥</div>
+            <div>
+              <h2 class="section-title" data-i18n="sec_multiplayer">Ko'p o'yinchili o'yinlar</h2>
+              <p class="section-subtitle">1 qurilmada 2 kishi yoki AI Bot & Lokal Room Code</p>
+            </div>
+          </div>
+        </div>
+        <div class="games-grid" id="grid-multiplayer"></div>
+      </div>
+    </section>
+
+    <!-- 10. DAILY CHALLENGES & STREAK -->
+    <section class="section-block section-challenges">
+      <div class="section-panel">
+        <div class="section-header">
+          <div class="section-title-group">
+            <div class="section-icon">🎁</div>
+            <div>
+              <h2 class="section-title" data-i18n="sec_challenges">Kunlik vazifalar</h2>
+              <p class="section-subtitle">Har kuni vazifalarni bajarib Coin va Diamond yuting</p>
+            </div>
+          </div>
+          <div class="streak-banner">🔥 <span data-i18n="streak_label">Kunlik Streak</span>: <span id="home-streak">1</span> kun</div>
+        </div>
+        <div class="challenges-grid" id="home-challenges"></div>
+      </div>
+    </section>
+
+    <!-- 11. TOP PLAYERS -->
+    <section class="section-block">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="section-icon">🏆</div>
+          <div>
+            <h2 class="section-title" data-i18n="sec_top_players">Eng kuchli o'yinchilar</h2>
+            <p class="section-subtitle">Lokal demo foydalanuvchilar orasidagi top liderlar</p>
+          </div>
+        </div>
+        <a href="pages/leaderboard.html" class="btn btn-glass btn-sm" data-i18n="view_all">Barchasini koʻrish</a>
+      </div>
+      <div class="podium-grid" id="home-podium"></div>
+    </section>
+
+    <!-- 12. WEEKLY TOURNAMENT -->
+    <section class="section-block section-tournament">
+      <div class="section-panel" id="home-tournament"></div>
+    </section>
+  </main>
+
+  <footer id="lumigo-footer"></footer>
+
+  <script defer src="js/storage.js"></script>
+  <script defer src="js/language.js"></script>
+  <script defer src="js/theme.js"></script>
+  <script defer src="js/auth.js"></script>
+  <script defer src="js/levels.js"></script>
+  <script defer src="js/rewards.js"></script>
+  <script defer src="js/friends.js"></script>
+  <script defer src="js/music.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/carousel.js"></script>
+  <script defer src="js/games.js"></script>
+  <script defer src="js/app.js"></script>
+  <script defer src="js/home.js"></script>
+</body>
+</html>

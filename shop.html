@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUMIGO — Do'kon (Shop & Inventory)</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logos/favicon.svg">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/games.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+  <header id="lumigo-navbar"></header>
+  <main class="container" id="shop-root" style="padding-top:24px;"></main>
+  <footer id="lumigo-footer"></footer>
+
+  <script defer src="../js/storage.js"></script>
+  <script defer src="../js/language.js"></script>
+  <script defer src="../js/theme.js"></script>
+  <script defer src="../js/auth.js"></script>
+  <script defer src="../js/levels.js"></script>
+  <script defer src="../js/rewards.js"></script>
+  <script defer src="../js/friends.js"></script>
+  <script defer src="../js/music.js"></script>
+  <script defer src="../js/search.js"></script>
+  <script defer src="../js/games.js"></script>
+  <script defer src="../js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.LUMIGO.app.initShell('shop', false);
+      const root = document.getElementById('shop-root');
+      let cat = 'all';
+
+      const ITEMS = [
+        { id: 'av_dragon', cat: 'Avatar', name: 'Cyber Dragon', icon: '🐉', price: 120, cur: 'coins', applyType: 'avatar', val: '🐉' },
+        { id: 'av_unicorn', cat: 'Avatar', name: 'Neon Unicorn', icon: '🦄', price: 15, cur: 'diamonds', applyType: 'avatar', val: '🦄' },
+        { id: 'sk_mecha', cat: 'Skins', name: 'Mecha Knight Skin', icon: '🤖', price: 180, cur: 'coins', applyType: 'avatar', val: '🤖' },
+        { id: 'fr_cyan', cat: 'Frames', name: 'Neon Cyan Frame', icon: '💠', price: 150, cur: 'coins', applyType: 'frame', val: 'frame-neon-cyan' },
+        { id: 'fr_gold', cat: 'Frames', name: 'Royal Gold Frame', icon: '👑', price: 18, cur: 'diamonds', applyType: 'frame', val: 'frame-royal-gold' },
+        { id: 'fr_pink', cat: 'Frames', name: 'Cyber Pink Frame', icon: '🌸', price: 90, cur: 'money', applyType: 'frame', val: 'frame-cyber-pink' },
+        { id: 'bg_cyber', cat: 'Backgrounds', name: 'Cyber Purple Aura', icon: '🌌', price: 200, cur: 'coins', applyType: 'bgTheme', val: 'theme-bg-cyber' },
+        { id: 'bg_aurora', cat: 'Backgrounds', name: 'Aurora Cyan Sky', icon: '🌠', price: 12, cur: 'diamonds', applyType: 'bgTheme', val: 'theme-bg-aurora' },
+        { id: 'bg_solar', cat: 'Game Themes', name: 'Solar Flare Theme', icon: '☀️', price: 85, cur: 'money', applyType: 'bgTheme', val: 'theme-bg-solar' },
+        { id: 'ef_spark', cat: 'Effects', name: 'Lightning Aura', icon: '⚡', price: 14, cur: 'diamonds', applyType: 'effect', val: 'spark' },
+        { id: 'pw_energy', cat: 'Power-ups', name: 'Full Energy (+50⚡)', icon: '🔋', price: 60, cur: 'coins', applyType: 'consumable', val: 50 },
+        { id: 'pw_xp', cat: 'Power-ups', name: 'XP Booster (+150 XP)', icon: '🚀', price: 50, cur: 'money', applyType: 'xp', val: 150 }
+      ];
+
+      function curIcon(c) {
+        return c === 'diamonds' ? '💎' : c === 'money' ? '💵' : '🪙';
+      }
+
+      function render() {
+        const L = window.LUMIGO;
+        const st = L.storage;
+        const user = st.getActiveUser();
+        if (!user) return;
+
+        const cats = ['all', 'Avatar', 'Skins', 'Frames', 'Backgrounds', 'Effects', 'Power-ups', 'Game Themes'];
+        const visible = cat === 'all' ? ITEMS : ITEMS.filter(i => i.cat === cat);
+
+        root.innerHTML = `
+          <div class="page-banner">
+            <div>
+              <span class="badge badge-purple">🛒 VIRTUAL DO'KON (Haqiqiy pul ishlatilmaydi)</span>
+              <h1 style="font-size:1.9rem;font-weight:900;margin-top:6px;">LUMIGO Do'kon & Inventar</h1>
+              <p style="color:var(--text-secondary);">Avatar, Frame, Fon va Power-uplarni sotib oling va darhol qoʻllang!</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <div class="panel-card" style="padding:10px 16px;">🪙 <strong>${user.coins}</strong> Coins</div>
+              <div class="panel-card" style="padding:10px 16px;">💎 <strong>${user.diamonds}</strong> Diamonds</div>
+              <div class="panel-card" style="padding:10px 16px;">💵 <strong>${user.money}</strong> Money</div>
+              <div class="panel-card" style="padding:10px 16px;">⚡ <strong>${user.energy ?? 100}%</strong> Energy</div>
+            </div>
+          </div>
+
+          <div class="tabs-bar">
+            ${cats.map(c => `<button class="tab-btn ${cat === c ? 'active' : ''}" data-sc="${c}">${c === 'all' ? 'Hammasi' : c}</button>`).join('')}
+          </div>
+
+          <div class="games-grid">
+            ${visible.map(item => {
+              const owned = (user.inventory || []).includes(item.id);
+              const isEquipped =
+                (item.applyType === 'avatar' && user.avatar === item.val) ||
+                (item.applyType === 'frame' && user.frame === item.val) ||
+                (item.applyType === 'bgTheme' && user.bgTheme === item.val) ||
+                (item.applyType === 'effect' && user.effect === item.val);
+
+              return `
+                <div class="game-card">
+                  <div class="game-thumb" style="background:linear-gradient(135deg,rgba(139,92,246,0.35),rgba(34,211,238,0.28));height:110px;">
+                    <div class="game-badges-top">
+                      <span class="game-tag">${item.cat}</span>
+                      ${owned ? `<span class="game-age-pill">✓ Inventarda</span>` : ''}
+                    </div>
+                    <span class="game-thumb-icon">${item.icon}</span>
+                  </div>
+                  <div class="game-info">
+                    <h3>${item.name}</h3>
+                    <p>Narxi: ${curIcon(item.cur)} ${item.price} ${item.cur}</p>
+                  </div>
+                  ${item.applyType === 'consumable' || item.applyType === 'xp' || !owned ? `
+                    <button class="btn btn-primary" data-buy="${item.id}">
+                      🛒 Sotib olish (${curIcon(item.cur)} ${item.price})
+                    </button>
+                  ` : `
+                    <button class="btn ${isEquipped ? 'btn-lime' : 'btn-hot'}" data-equip="${item.id}" ${isEquipped ? 'disabled' : ''}>
+                      ${isEquipped ? '✓ Tanlangan' : '✨ Qoʻllash (Equip)'}
+                    </button>
+                  `}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+
+        root.querySelectorAll('[data-sc]').forEach(b => {
+          b.onclick = () => { cat = b.getAttribute('data-sc'); render(); };
+        });
+
+        root.querySelectorAll('[data-buy]').forEach(b => {
+          b.onclick = () => {
+            const item = ITEMS.find(i => i.id === b.getAttribute('data-buy'));
+            const u = st.getActiveUser();
+            if ((u[item.cur] || 0) < item.price) {
+              L.rewards.toast(`Balans yetarli emas! (${curIcon(item.cur)} ${item.price} kerak)`, '⚠️');
+              return;
+            }
+            st.updateActiveUser(usr => {
+              usr[item.cur] -= item.price;
+              if (item.applyType === 'consumable') {
+                usr.energy = Math.min(100, (usr.energy ?? 100) + item.val);
+              } else if (item.applyType === 'xp') {
+                // Handled right below
+              } else {
+                usr.inventory = Array.from(new Set([...(usr.inventory || []), item.id]));
+                usr[item.applyType] = item.val;
+              }
+              return usr;
+            });
+            if (item.applyType === 'xp') L.levels.addXP(item.val);
+            st.addNotification('Doʻkon xaridi!', `${item.name} sotib olindi!`, item.icon);
+            L.rewards.toast(`${item.name} sotib olindi!`, '🛍️');
+            render();
+          };
+        });
+
+        root.querySelectorAll('[data-equip]').forEach(b => {
+          b.onclick = () => {
+            const item = ITEMS.find(i => i.id === b.getAttribute('data-equip'));
+            st.updateActiveUser(usr => {
+              usr[item.applyType] = item.val;
+              return usr;
+            });
+            L.rewards.toast(`${item.name} qoʻllandi!`, '✨');
+            render();
+          };
+        });
+      }
+
+      window.addEventListener('lumigo:user-updated', render);
+      render();
+    });
+  </script>
+</body>
+</html>

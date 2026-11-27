@@ -1,0 +1,115 @@
+/* ==========================================================================
+   LUMIGO — Responsive Breakpoints (Desktop, Laptop, Tablet, Mobile)
+   ========================================================================== */
+
+@media (max-width: 1220px) {
+  .nav-links {
+    display: none;
+  }
+  .hamburger-btn {
+    display: inline-flex;
+  }
+  .carousel-track .game-card {
+    flex: 0 0 calc((100% - 36px) / 3);
+  }
+}
+
+@media (max-width: 980px) {
+  .hero-card {
+    grid-template-columns: 1fr;
+    padding: 30px 24px;
+  }
+  .code-workspace {
+    grid-template-columns: 1fr;
+  }
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .carousel-track .game-card {
+    flex: 0 0 calc((100% - 18px) / 2);
+  }
+}
+
+@media (max-width: 720px) {
+  .currency-group {
+    display: none;
+  }
+  .nav-search-btn span.search-label {
+    display: none;
+  }
+  .age-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .difficulty-grid {
+    grid-template-columns: 1fr;
+  }
+  .podium-grid {
+    grid-template-columns: 1fr;
+  }
+  .podium-card.rank-1,
+  .podium-card.rank-2,
+  .podium-card.rank-3 {
+    order: unset;
+  }
+  .chess-board {
+    grid-template-columns: repeat(8, 38px);
+    grid-template-rows: repeat(8, 38px);
+  }
+  .chess-sq { font-size: 1.45rem; }
+  .c4-board {
+    grid-template-columns: repeat(7, 38px);
+  }
+  .c4-cell {
+    width: 38px;
+    height: 38px;
+  }
+  .sudoku-grid {
+    grid-template-columns: repeat(9, 32px);
+  }
+  .sudoku-cell {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+  .ttt-board {
+    grid-template-columns: repeat(3, 80px);
+  }
+  .ttt-cell {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    padding: 0 14px;
+  }
+  .carousel-track .game-card {
+    flex: 0 0 88%;
+  }
+  .games-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+  .brand-tagline {
+    display: none;
+  }
+  .lang-select {
+    padding: 6px;
+    font-size: 0.76rem;
+  }
+  .game-arena-shell {
+    border-radius: 18px;
+  }
+  .game-stage {
+    padding: 12px;
+  }
+  .simon-grid {
+    grid-template-columns: repeat(2, 108px);
+  }
+  .simon-pad {
+    height: 108px;
+  }
+}
